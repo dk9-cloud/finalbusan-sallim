@@ -4,6 +4,7 @@ import ComparisonForm from '@/components/comparison/ComparisonForm';
 import { ROUTES } from '@/constants/routes';
 import { SITE } from '@/constants/seo';
 import { pageMeta } from '@/utils/seo';
+import home from './home.module.css';
 
 export const metadata = pageMeta({
   title: SITE.title,
@@ -28,10 +29,10 @@ export default function Home() {
       />
       <div className="page">
         <ComparisonForm />
-        <div className="section features">
+        <div className={`section ${home.features}`}>
           {FEATURES.map((f) => (
-            <Link key={f.href} href={f.href} className="feature">
-              <span className="feature-icon">
+            <Link key={f.href} href={f.href} className={home.feature}>
+              <span className={home.icon}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={f.icon} /></svg>
               </span>
               <span className="stack" style={{ gap: 2 }}>

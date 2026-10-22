@@ -8,6 +8,7 @@ import { GU, MAP_HEIGHT, SPOTS, SPOT_TYPES } from '@/constants/busan';
 import { ROUTES } from '@/constants/routes';
 import { useApp, useNumbers } from '@/stores/comparison';
 import { fmt, signed } from '@/utils/formatMoney';
+import styles from './BusanMap.module.css';
 
 // 5단계 파란색 (원룸 기준 구간, 투룸은 같은 비율로 늘림)
 const BINS = [
@@ -81,16 +82,16 @@ export default function BusanMap() {
 
   return (
       <div className="page">
-        <div className="map-layout lift">
+        <div className={`${styles.layout} lift`}>
           <section className="card">
-            <div className="map-toolbar">
+            <div className={styles.toolbar}>
               <h2>구·군별 월세 중앙값</h2>
-              <div className="seg" role="group" aria-label="방 종류">
-                <button className={room === 'one' ? 'on' : ''} onClick={() => setRoom('one')}>원룸</button>
-                <button className={room === 'two' ? 'on' : ''} onClick={() => setRoom('two')}>투룸</button>
+              <div className={styles.seg} role="group" aria-label="방 종류">
+                <button className={room === 'one' ? styles.on : ''} onClick={() => setRoom('one')}>원룸</button>
+                <button className={room === 'two' ? styles.on : ''} onClick={() => setRoom('two')}>투룸</button>
               </div>
             </div>
-            <div className="map-wrap">
+            <div className={styles.wrap}>
               <svg viewBox={`0 0 1000 ${MAP_HEIGHT}`} role="img" aria-label="부산 구·군별 월세 지도">
                 <g strokeLinejoin="round">
                   {GU.map((g) => (
@@ -113,7 +114,7 @@ export default function BusanMap() {
                 return (
                   <button
                     key={g.name}
-                    className={on ? 'map-label on' : dark ? 'map-label dark' : 'map-label'}
+                    className={`${styles.label}${on ? ` ${styles.picked}` : dark ? ` ${styles.dark}` : ''}`}
                     style={{ left: `${g.label[0]}%`, top: `${g.label[1]}%` }}
                     onClick={() => pick(g.name)}
                   >
@@ -121,9 +122,9 @@ export default function BusanMap() {
                   </button>
                 );
               })}
-              <span className="sea-label">남해 바다</span>
+              <span className={styles.sea}>남해 바다</span>
             </div>
-            <div className="legend">
+            <div className={styles.legend}>
               {BINS.map((b, i) => {
                 const up = Math.floor(b.max * factor);
                 const low = i === 0 ? null : Math.floor(BINS[i - 1].max * factor) + 1;
@@ -144,7 +145,7 @@ export default function BusanMap() {
             <section className="card stack">
               <label className="stack" style={{ gap: 6 }}>
                 <span className="small" style={{ fontWeight: 700 }}>동네 선택</span>
-                <select className="select" value={sel.name} onChange={(e) => pick(e.target.value)}>
+                <select className={styles.select} value={sel.name} onChange={(e) => pick(e.target.value)}>
                   {GU.map((g) => <option key={g.name} value={g.name}>{g.name}</option>)}
                 </select>
               </label>
@@ -152,34 +153,34 @@ export default function BusanMap() {
               <div>
                 <div style={{ fontSize: 22, fontWeight: 800 }}>부산 {sel.name}</div>
                 <div className="small muted">월세 중앙값</div>
-                <div className="panel-big">{selRent}<small>만원</small></div>
+                <div className={styles.panelBig}>{selRent}<small>만원</small></div>
                 <div className="small muted">{base[sel.name].fromDb ? 'DB(Flask)에서 가져온 값' : `거래 ${base[sel.name].count}건 기준 (예시)${base[sel.name].count <= 30 ? ' · 거래가 적어 집계 기간을 늘린 값' : ''}`}</div>
               </div>
-              <div className="stat-grid">
-                <div className="stat"><span className="small muted">부산 전체 중앙값</span><b>{fmt(allMedian)}만원</b></div>
-                <div className="stat"><span className="small muted">부산 중앙값 대비</span><b className={vsAll > 0 ? 'bad' : 'good'}>{signed(vsAll)}만원</b></div>
+              <div className={styles.statGrid}>
+                <div className={styles.stat}><span className="small muted">부산 전체 중앙값</span><b>{fmt(allMedian)}만원</b></div>
+                <div className={styles.stat}><span className="small muted">부산 중앙값 대비</span><b className={vsAll > 0 ? 'bad' : 'good'}>{signed(vsAll)}만원</b></div>
               </div>
               {save != null ? (
-                <div className="save-box">
+                <div className={styles.save}>
                   내 서울 월세 <b>{fmt(seoulRent)}만원</b>과 비교하면<br />
                   {save >= 0
                     ? <>월 <b>{fmt(save)}만원</b> · 1년 <b>{fmt(save * 12)}만원</b> 절약</>
                     : <>월 <b className="bad">{fmt(-save)}만원</b> 더 비싸요</>}
                 </div>
               ) : (
-                <div className="save-box">계산기에 서울 월세를 넣으면 얼마나 아낄 수 있는지 보여드려요.</div>
+                <div className={styles.save}>계산기에 서울 월세를 넣으면 얼마나 아낄 수 있는지 보여드려요.</div>
               )}
               <button className="btn btn-grad" style={{ minHeight: 52, fontSize: 16 }} onClick={apply}>이 동네 월세로 계산하기 →</button>
             </section>
 
-            <section className="card top5">
+            <section className={`card ${styles.top5}`}>
               <h2 style={{ fontSize: 18, marginBottom: 10 }}>월세 낮은 동네 TOP 5</h2>
               <ol>
                 {top5.map((g, i) => (
                   <li key={g.name} onClick={() => pick(g.name)}>
-                    <span className="rank">{i + 1}</span>
+                    <span className={styles.rank}>{i + 1}</span>
                     <strong style={{ width: 68 }}>{g.name}</strong>
-                    <span className="bar"><span style={{ width: `${(rentOf(g.name) / top5Max) * 100}%` }} /></span>
+                    <span className={styles.bar}><span style={{ width: `${(rentOf(g.name) / top5Max) * 100}%` }} /></span>
                     <strong style={{ width: 56, textAlign: 'right' }}>{rentOf(g.name)}만원</strong>
                   </li>
                 ))}
@@ -195,25 +196,25 @@ export default function BusanMap() {
           </div>
           <div className="chips" style={{ gap: 6, padding: '10px 12px', background: 'var(--bg)', borderRadius: 12 }}>
             <span className="small" style={{ fontWeight: 700 }}>동네 {sel.dongs.length}곳</span>
-            {sel.dongs.map((d) => <span key={d} className="dong-chip">{d}</span>)}
+            {sel.dongs.map((d) => <span key={d} className={styles.dong}>{d}</span>)}
           </div>
-          <div className="spots">
+          <div className={styles.spots}>
             {(SPOTS[sel.name] || []).map(([name, type, fact], i) => {
               const key = sel.name + i;
               const open = flip === key;
               const t = SPOT_TYPES[type];
               const q = encodeURIComponent(`부산 ${name}`);
               return (
-                <div key={key} className="spot" style={{ background: open ? 'var(--ink)' : t.bg, color: open ? '#fff' : 'var(--ink)' }}>
-                  <button className="spot-btn" aria-pressed={open} onClick={() => setFlip(open ? '' : key)}>
-                    <span className="spot-icon">
+                <div key={key} className={styles.spot} style={{ background: open ? 'var(--ink)' : t.bg, color: open ? '#fff' : 'var(--ink)' }}>
+                  <button className={styles.spotBtn} aria-pressed={open} onClick={() => setFlip(open ? '' : key)}>
+                    <span className={styles.spotIcon}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F1E33" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={t.icon} /></svg>
                     </span>
                     <strong style={{ fontSize: open ? 13 : 15 }}>{name}</strong>
                     <span style={{ fontSize: open ? 13 : 12, opacity: open ? 1 : 0.75 }}>{open ? fact : type}</span>
                   </button>
                   {open && (
-                    <div className="spot-links">
+                    <div className={styles.spotLinks}>
                       <a href={`https://search.naver.com/search.naver?query=${q}`} target="_blank" rel="noopener noreferrer">더 알아보기 ↗</a>
                       <a href={`https://map.kakao.com/?q=${q}`} target="_blank" rel="noopener noreferrer">지도 보기 ↗</a>
                     </div>

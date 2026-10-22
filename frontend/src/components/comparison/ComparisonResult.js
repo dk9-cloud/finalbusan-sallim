@@ -9,6 +9,8 @@ import { BENEFITS } from '@/constants/benefits';
 import { useNumbers, LABELS } from '@/stores/comparison';
 import { compareDetailed, livingDetail } from '@/utils/calc';
 import { fmt } from '@/utils/formatMoney';
+import hero from '@/components/common/Hero.module.css';
+import styles from './ComparisonResult.module.css';
 
 const won = (n) => Math.round(n).toLocaleString('ko-KR'); // 1년 금액은 만원 단위 정수로
 const wonSigned = (n) => (Math.round(n) > 0 ? '+' : Math.round(n) < 0 ? '−' : '') + won(Math.abs(n));
@@ -31,14 +33,14 @@ function wordOf(x) {
 function Bars({ groups }) {
   const max = Math.max(1, ...groups.flatMap((g) => [g.s, g.b]));
   return (
-    <div className="vbars" role="img" aria-label={groups.map((g) => `${g.label} 서울 ${won(g.s)}만원 부산 ${won(g.b)}만원`).join(', ')}>
+    <div className={styles.vbars} role="img" aria-label={groups.map((g) => `${g.label} 서울 ${won(g.s)}만원 부산 ${won(g.b)}만원`).join(', ')}>
       {groups.map((g) => (
-        <div key={g.label} className="vbar-group">
-          <div className="vbar-pair">
-            <div className="vbar-col"><span className="vbar-val muted">{won(g.s)}</span><span className="vbar seoul" style={{ height: `${Math.max(1, (Math.max(0, g.s) / max) * 100)}%` }} /></div>
-            <div className="vbar-col"><span className="vbar-val good">{won(g.b)}</span><span className="vbar busan" style={{ height: `${Math.max(1, (Math.max(0, g.b) / max) * 100)}%` }} /></div>
+        <div key={g.label} className={styles.vbarGroup}>
+          <div className={styles.vbarPair}>
+            <div className={styles.vbarCol}><span className={`${styles.vbarVal} muted`}>{won(g.s)}</span><span className={`${styles.vbar} ${styles.seoul}`} style={{ height: `${Math.max(1, (Math.max(0, g.s) / max) * 100)}%` }} /></div>
+            <div className={styles.vbarCol}><span className={`${styles.vbarVal} good`}>{won(g.b)}</span><span className={`${styles.vbar} ${styles.busan}`} style={{ height: `${Math.max(1, (Math.max(0, g.b) / max) * 100)}%` }} /></div>
           </div>
-          <span className="vbar-label">{g.label}</span>
+          <span className={styles.vbarLabel}>{g.label}</span>
         </div>
       ))}
     </div>
@@ -57,15 +59,15 @@ function Waterfall({ start, steps, end }) {
   cols.push({ label: '부산', from: 0, to: end, kind: 'busan', text: won(end) });
   const max = Math.max(1, ...cols.map((c) => c.to));
   return (
-    <div className="vbars wf" role="img" aria-label="서울 남는 돈에서 부산 남는 돈까지 항목별 변화">
+    <div className={`${styles.vbars} ${styles.wf}`} role="img" aria-label="서울 남는 돈에서 부산 남는 돈까지 항목별 변화">
       {cols.map((c) => (
-        <div key={c.label} className="vbar-group">
-          <div className="wf-area">
-            <span className={`wf-bar ${c.kind}`} style={{ bottom: `${(Math.max(0, c.from) / max) * 100}%`, height: `${Math.max(0.8, ((c.to - c.from) / max) * 100)}%` }}>
-              <span className="wf-val">{c.text}</span>
+        <div key={c.label} className={styles.vbarGroup}>
+          <div className={styles.wfArea}>
+            <span className={`${styles.wfBar} ${styles[c.kind]}`} style={{ bottom: `${(Math.max(0, c.from) / max) * 100}%`, height: `${Math.max(0.8, ((c.to - c.from) / max) * 100)}%` }}>
+              <span className={styles.wfVal}>{c.text}</span>
             </span>
           </div>
-          <span className="vbar-label">{c.label}</span>
+          <span className={styles.vbarLabel}>{c.label}</span>
         </div>
       ))}
     </div>
@@ -122,7 +124,7 @@ export default function ComparisonResult() {
     <>
       <Hero
         compact
-        top={<div className="chips"><Link href={ROUTES.home} className="back-link">← 다시 계산하기</Link><Link href={ROUTES.map} className="back-link">🏠 부산 동네별 월세 보기 →</Link></div>}
+        top={<div className="chips"><Link href={ROUTES.home} className={hero.backLink}>← 다시 계산하기</Link><Link href={ROUTES.map} className={hero.backLink}>🏠 부산 동네별 월세 보기 →</Link></div>}
         eyebrow="RESULT"
         title="계산 결과"
         subtitle={gain
@@ -130,38 +132,38 @@ export default function ComparisonResult() {
           : <>부산으로 이사하면 1년에 {won(Math.abs(r.yearlyDiff))}만원이 덜 남아요. 월세나 월급 조건을 바꿔 보세요.</>}
       />
       <div className="page">
-        <div className="sum-grid lift">
+        <div className={`${styles.sumGrid} lift`}>
           <section className="card stack" style={{ gap: 6 }}>
             <span className="tag" style={{ alignSelf: 'flex-start' }}>1년 기준 · 부산 이주 시</span>
             <span className="muted" style={{ marginTop: 8 }}>{gain ? '매년 더 남는 돈' : '매년 줄어드는 돈'}</span>
-            <div className="big-num" style={{ color: gain ? 'var(--brand)' : 'var(--bad)' }}>{wonSigned(r.yearlyDiff)}<small>만원</small></div>
+            <div className={styles.bigNum} style={{ color: gain ? 'var(--brand)' : 'var(--bad)' }}>{wonSigned(r.yearlyDiff)}<small>만원</small></div>
             <span className="small muted">한 달로 보면 매월 {fmt(Math.abs(r.monthlyDiff))}만원의 {gain ? '여유가 생겨요.' : '부족분이 생겨요.'}</span>
           </section>
-          <section className="card vs-card">
+          <section className={`card ${styles.vsCard}`}>
             <div>
-              <div className="vs-label">서울 연 잔여금</div>
-              <div className="vs-value">{won(r.seoul.left * Y)}만원</div>
+              <div className={styles.vsLabel}>서울 연 잔여금</div>
+              <div className={styles.vsValue}>{won(r.seoul.left * Y)}만원</div>
               <div className="small muted">월 {fmt(r.seoul.left)}만원</div>
             </div>
-            <span className="vs-arrow" aria-hidden="true">→</span>
+            <span className={styles.vsArrow} aria-hidden="true">→</span>
             <div>
-              <div className="vs-label">부산 연 잔여금</div>
-              <div className="vs-value" style={{ color: 'var(--brand)' }}>{won(r.busan.left * Y)}만원</div>
+              <div className={styles.vsLabel}>부산 연 잔여금</div>
+              <div className={styles.vsValue} style={{ color: 'var(--brand)' }}>{won(r.busan.left * Y)}만원</div>
               <div className="small muted">월 {fmt(r.busan.left)}만원</div>
             </div>
           </section>
         </div>
 
         {top && Math.abs(top.impact) >= 0.5 && (
-          <p className="cmp-summary section">
+          <p className={`${styles.summary} section`}>
             {gain ? <>가장 큰 차이는 <strong>{top.label}</strong>예요. 1년에 <strong className="good">{won(top.impact)}만원</strong> {top.word}.</>
               : <>가장 크게 손해 보는 항목은 <strong>{top.label}</strong>예요. 1년에 <strong className="bad">{won(Math.abs(top.impact))}만원</strong> {top.word}.</>}
           </p>
         )}
 
-        <div className="cmp-grid">
-          <section className="card cmp-card">
-            <div className="tbl-row head"><span>항목 (1년, 만원)</span><span className="num">서울</span><span className="num">부산</span><span className="num">차이</span></div>
+        <div className={styles.grid}>
+          <section className={`card ${styles.cmpCard}`}>
+            <div className={`${styles.row} ${styles.head}`}><span>항목 (1년, 만원)</span><span className={styles.num}>서울</span><span className={styles.num}>부산</span><span className={styles.num}>차이</span></div>
             {rows.map((x) => {
               const d = (x.b - x.s) * Y;
               const zero = Math.abs(d) < 0.5;
@@ -171,20 +173,20 @@ export default function ComparisonResult() {
               const sub = x.key === 'rent' ? '누르면 월세 그래프' : x.key === 'living' ? (r.busanLivingAuto ? '누르면 세부 항목 · 지수 95.2' : '누르면 세부 항목') : null;
               return (
                 <div key={x.key}>
-                  <div className={`tbl-row${click ? ' clickable' : ''}${(x.key === tab) ? ' selected' : ''}`} onClick={click || undefined} role={click ? 'button' : undefined} aria-expanded={x.key === 'living' ? open : undefined}>
+                  <div className={`${styles.row}${click ? ` ${styles.clickable}` : ''}${(x.key === tab) ? ` ${styles.selected}` : ''}`} onClick={click || undefined} role={click ? 'button' : undefined} aria-expanded={x.key === 'living' ? open : undefined}>
                     <span><strong>{x.label}{click ? ' ›' : ''}</strong>{sub && <small>{sub}</small>}</span>
-                    <span className="num">{won(x.s * Y)}</span>
-                    <span className="num">{won(x.b * Y)}</span>
-                    <span className={`num diff ${zero ? 'muted' : good ? 'good' : 'bad'}`}>{zero ? '0' : `${d > 0 ? '+' : '−'}${won(Math.abs(d))}`}</span>
+                    <span className={styles.num}>{won(x.s * Y)}</span>
+                    <span className={styles.num}>{won(x.b * Y)}</span>
+                    <span className={`${styles.num} ${styles.diff} ${zero ? 'muted' : good ? 'good' : 'bad'}`}>{zero ? '0' : `${d > 0 ? '+' : '−'}${won(Math.abs(d))}`}</span>
                   </div>
                   {x.key === 'living' && open && (
-                    <div className="tbl-sub">
+                    <div className={styles.subWrap}>
                       {livingDetail(r.seoul.living).map((dt) => (
-                        <div key={dt.label} className="tbl-row sub">
+                        <div key={dt.label} className={`${styles.row} ${styles.sub}`}>
                           <span><strong>{dt.label}</strong><small>{dt.example}</small></span>
-                          <span className="num">{won(dt.seoul * Y)}</span>
-                          <span className="num">{won(dt.busan * Y)}</span>
-                          <span className="num diff good">{dt.ratio === 1 ? '같음' : `−${Math.round((1 - dt.ratio) * 100)}%`}</span>
+                          <span className={styles.num}>{won(dt.seoul * Y)}</span>
+                          <span className={styles.num}>{won(dt.busan * Y)}</span>
+                          <span className={`${styles.num} ${styles.diff} good`}>{dt.ratio === 1 ? '같음' : `−${Math.round((1 - dt.ratio) * 100)}%`}</span>
                         </div>
                       ))}
                       <small className="muted">비중: 통계청 가계동향(39세 이하 근로자가구) · 가격: 행안부 지방물가 12개월 평균{r.busanLivingAuto ? '' : ' · 부산 생활비를 직접 입력해서 참고용'}</small>
@@ -193,16 +195,16 @@ export default function ComparisonResult() {
                 </div>
               );
             })}
-            <div className="tbl-row total">
+            <div className={`${styles.row} ${styles.total}`}>
               <span><strong>1년에 남는 돈</strong><small>월급 − 월세 − 생활비 − 교통비</small></span>
-              <span className="num">{won(r.seoul.left * Y)}</span>
-              <span className="num">{won(r.busan.left * Y)}</span>
-              <span className={`num diff ${gain ? 'good' : 'bad'}`}>{wonSigned(r.yearlyDiff)}</span>
+              <span className={styles.num}>{won(r.seoul.left * Y)}</span>
+              <span className={styles.num}>{won(r.busan.left * Y)}</span>
+              <span className={`${styles.num} ${styles.diff} ${gain ? 'good' : 'bad'}`}>{wonSigned(r.yearlyDiff)}</span>
             </div>
             <p className="small muted" style={{ margin: '12px 0 0' }}>› 표시가 있는 줄을 누르면 오른쪽 그래프가 바뀌어요. 생활비를 누르면 세부 항목이 펼쳐져요.</p>
           </section>
 
-          <section className="card cmp-card stack">
+          <section className={`card ${styles.cmpCard} stack`}>
             <div className="chips">
               {[['all', '전체'], ['rent', '월세'], ['living', '생활비'], ['waterfall', '한눈에 (워터폴)']].map(([k, label]) => (
                 <button key={k} className={tab === k ? 'chip on' : 'chip'} onClick={() => setTab(k)}>{label}</button>
@@ -225,12 +227,12 @@ export default function ComparisonResult() {
                   ]
               } />
             )}
-            <div className="chart-legend small muted">
+            <div className={`${styles.legend} small muted`}>
               {tab === 'waterfall'
-                ? <><i className="lg seoul" />서울 남는 돈 <i className="lg up" />늘어남 <i className="lg down" />줄어듦 <i className="lg busan" />부산 남는 돈 · 단위: 만원/년</>
-                : <><i className="lg seoul" />서울 <i className="lg busan" />부산 · 단위: 만원/년</>}
+                ? <><i className={`${styles.lg} ${styles.seoul}`} />서울 남는 돈 <i className={`${styles.lg} ${styles.up}`} />늘어남 <i className={`${styles.lg} ${styles.down}`} />줄어듦 <i className={`${styles.lg} ${styles.busan}`} />부산 남는 돈 · 단위: 만원/년</>
+                : <><i className={`${styles.lg} ${styles.seoul}`} />서울 <i className={`${styles.lg} ${styles.busan}`} />부산 · 단위: 만원/년</>}
             </div>
-            <Link href={ROUTES.map} className="map-cta">
+            <Link href={ROUTES.map} className={styles.mapCta}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z M12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" /></svg>
               어느 동네에 살지 고민되나요? 부산 동네별 월세 보기 →
             </Link>
@@ -238,7 +240,7 @@ export default function ComparisonResult() {
         </div>
 
         {gain && r.yearlyDiff > 0 && (
-          <div className="convert section">
+          <div className={`${styles.convert} section`}>
             <span className="small" style={{ fontWeight: 700 }}>1년에 더 남는 돈이면</span>
             <strong style={{ fontSize: 18 }}>{c.text(convN)}</strong>
             <span className="small muted">({c.per(r.yearlyDiff * 10000)}) · {c.src}</span>
@@ -255,9 +257,9 @@ export default function ComparisonResult() {
             <h2>⭐ 부산에서 이용할 수 있는 금융상품</h2>
             <Link href={ROUTES.benefits} className="small" style={{ fontWeight: 700, color: 'var(--brand)' }}>전체보기 →</Link>
           </div>
-          <div className="products">
+          <div className={styles.products}>
             {featured.map((p) => (
-              <div key={p.id} className="product">
+              <div key={p.id} className={styles.product}>
                 <span className="tag" style={{ alignSelf: 'flex-start' }}>{p.cat}</span>
                 <h3>{p.title}</h3>
                 <span className="small muted">{p.desc}</span>

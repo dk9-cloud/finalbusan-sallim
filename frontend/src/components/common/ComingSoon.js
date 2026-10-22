@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Hero from './Hero';
 import { ROUTES } from '@/constants/routes';
+import styles from './ComingSoon.module.css';
 
 // 아직 기획 중인 메뉴의 자리 표시 화면
 export default function ComingSoon({ eyebrow, title, subtitle, items }) {
@@ -11,7 +12,7 @@ export default function ComingSoon({ eyebrow, title, subtitle, items }) {
         <section className="card lift stack" style={{ maxWidth: 720 }}>
           <span className="tag" style={{ alignSelf: 'flex-start' }}>준비 중</span>
           <h2 style={{ fontSize: 22 }}>이런 내용을 준비하고 있어요</h2>
-          <ul className="soon-list">
+          <ul className={styles.list}>
             {items.map((it) => <li key={it}>{it}</li>)}
           </ul>
           <div className="chips">

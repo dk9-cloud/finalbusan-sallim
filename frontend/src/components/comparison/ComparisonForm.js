@@ -7,6 +7,7 @@ import { ROUTES } from '@/constants/routes';
 import { useApp, useNumbers, LABELS } from '@/stores/comparison';
 import { 물가비율 } from '@/utils/calc';
 import { fmt } from '@/utils/formatMoney';
+import styles from './ComparisonForm.module.css';
 
 export const ICONS = {
   pay: 'M3 7h18v12H3z M3 7l3-3h12l3 3 M16 13h2',
@@ -53,28 +54,28 @@ export default function ComparisonForm() {
   const renderField = (f) => {
     const err = tried && missing.includes(f.key);
     return (
-      <label key={f.key} className="field">
-        <span className="field-label">
-          <span className="field-icon"><Icon d={ICONS[f.icon]} /></span>
+      <label key={f.key} className={styles.field}>
+        <span className={styles.label}>
+          <span className={styles.icon}><Icon d={ICONS[f.icon]} /></span>
           {f.label}
-          {f.optional && <span className="opt">선택</span>}
+          {f.optional && <span className={styles.opt}>선택</span>}
         </span>
-        <span className="money">
+        <span className={styles.money}>
           <input
             inputMode="decimal"
             value={inputs[f.key]}
             placeholder={placeholder(f)}
-            className={err ? 'err' : ''}
+            className={err ? styles.err : ''}
             aria-invalid={err}
             onChange={(e) => setField(f.key, e.target.value.replace(/[^0-9.]/g, ''))}
           />
           <span>만원</span>
         </span>
         {f.key === 'busanLiving' && (
-          <span className="hint">비워두면 서울 생활비 × <b>{물가비율}</b> (부산 물가가 4.8% 낮음)로 계산해요</span>
+          <span className={styles.hint}>비워두면 서울 생활비 × <b>{물가비율}</b> (부산 물가가 4.8% 낮음)로 계산해요</span>
         )}
         {f.key === 'busanRent' && (
-          <span className="hint">부산 월세를 모르겠다면 <a href={ROUTES.map} style={{ color: 'var(--brand)', fontWeight: 700 }}>동네 지도</a>에서 골라보세요</span>
+          <span className={styles.hint}>부산 월세를 모르겠다면 <a href={ROUTES.map} style={{ color: 'var(--brand)', fontWeight: 700 }}>동네 지도</a>에서 골라보세요</span>
         )}
       </label>
     );
@@ -87,26 +88,26 @@ export default function ComparisonForm() {
 
   return (
     <section className="card lift">
-      <div className="calc-head">
+      <div className={styles.head}>
         <h2>생활비 비교 계산기</h2>
         <button className="btn-ghost" onClick={() => { reset(); setTried(false); }}>
           ↺ 초기화
         </button>
       </div>
-      <div className="calc-cols">
-        <div className="calc-col">
-          <h3><span className="city-dot" />서울 <small>지금 살고 있는 곳</small></h3>
+      <div className={styles.cols}>
+        <div className={styles.col}>
+          <h3><span className={styles.dot} />서울 <small>지금 살고 있는 곳</small></h3>
           {SEOUL.map(renderField)}
         </div>
-        <div className="calc-arrow" aria-hidden="true">
+        <div className={styles.arrow} aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14 M13 6l6 6-6 6" /></svg>
         </div>
-        <div className="calc-col busan">
-          <h3><span className="city-dot" />부산 <small>이사하려는 곳</small></h3>
+        <div className={`${styles.col} ${styles.busan}`}>
+          <h3><span className={styles.dot} />부산 <small>이사하려는 곳</small></h3>
           {BUSAN.map(renderField)}
         </div>
       </div>
-      <div className="calc-foot">
+      <div className={styles.foot}>
         {tried && !complete && (
           <span className="small bad">{missing.map((k) => LABELS[k]).join(', ')}을(를) 입력해 주세요.</span>
         )}

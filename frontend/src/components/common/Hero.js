@@ -1,4 +1,6 @@
-// 페이지 상단 배경: 부산 하늘·바다·광안대교 느낌의 일러스트 
+import styles from './Hero.module.css';
+
+// 페이지 상단 배경: 부산 하늘·바다·광안대교 느낌의 일러스트
 export default function Hero({ eyebrow, title, subtitle, top, compact = false }) {
   // 두 주탑 사이 현수선(곡선) 아래로 내려오는 수직 케이블 (주탑 x=900, 1120 / 상판 y=300)
   const hangers = [];
@@ -8,8 +10,8 @@ export default function Hero({ eyebrow, title, subtitle, top, compact = false })
     hangers.push(<line key={x} x1={x} y1={y} x2={x} y2={298} stroke="#B7CBE4" strokeWidth="1.2" />);
   }
   return (
-    <section className={compact ? 'hero hero-compact' : 'hero'}>
-      <svg className="hero-art" viewBox="0 0 1440 380" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">
+    <section className={compact ? `${styles.hero} ${styles.compact}` : styles.hero}>
+      <svg className={styles.art} viewBox="0 0 1440 380" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">
         <defs>
           <linearGradient id="hero-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#E6F0FC" /><stop offset="1" stopColor="#F5F9FE" /></linearGradient>
           <linearGradient id="hero-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#8DB9EA" /><stop offset="0.6" stopColor="#C4DCF5" /><stop offset="1" stopColor="#F4F7FB" /></linearGradient>
@@ -35,11 +37,11 @@ export default function Hero({ eyebrow, title, subtitle, top, compact = false })
           <rect x="740" y="297" width="560" height="5" fill="#FFFFFF" stroke="#C7D7EA" />
         </g>
       </svg>
-      <div className="hero-content">
+      <div className={styles.content}>
         {top && <div>{top}</div>}
-        {eyebrow && <span className="eyebrow">{eyebrow}</span>}
-        <h1 className="hero-title">{title}</h1>
-        {subtitle && <p className="hero-sub">{subtitle}</p>}
+        {eyebrow && <span className={styles.eyebrow}>{eyebrow}</span>}
+        <h1 className={styles.title}>{title}</h1>
+        {subtitle && <p className={styles.sub}>{subtitle}</p>}
       </div>
     </section>
   );

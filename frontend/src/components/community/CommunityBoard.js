@@ -3,6 +3,7 @@
 // 커뮤니티 (P2): 검색 + 카테고리 + 글 목록 + 글쓰기
 // ⚠️ 서버·로그인 연결 전이라 글은 화면에만 저장됨 (새로고침하면 사라짐) → 나중에 Supabase 테이블로 교체
 import { useState } from 'react';
+import styles from './CommunityBoard.module.css';
 
 const CATS = ['이주 후기', '동네 추천', '질문·답변', '정보 공유'];
 const ICON = {
@@ -40,8 +41,8 @@ export default function CommunityBoard() {
 
   return (
     <>
-      <div className="search-row">
-        <label className="search-box">
+      <div className={styles.searchRow}>
+        <label className={styles.searchBox}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="관심있는 글을 검색해 보세요." aria-label="글 검색" />
         </label>
@@ -55,8 +56,8 @@ export default function CommunityBoard() {
               <button type="button" key={c} className={form.cat === c ? 'chip on' : 'chip'} onClick={() => setForm({ ...form, cat: c })}>{c}</button>
             ))}
           </div>
-          <input className="text-input" placeholder="제목" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-          <textarea className="text-input" rows={4} placeholder="내용을 입력해 주세요." value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} />
+          <input className={styles.textInput} placeholder="제목" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+          <textarea className={styles.textInput} rows={4} placeholder="내용을 입력해 주세요." value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'space-between', flexWrap: 'wrap' }}>
             <span className="small muted">로그인·DB 연결 전이라 새로고침하면 글이 사라져요.</span>
             <button className="btn" type="submit" disabled={!form.title.trim()}>등록하기</button>
@@ -73,14 +74,14 @@ export default function CommunityBoard() {
       <div className="stack" style={{ gap: 14 }}>
         {list.length === 0 && <div className="card muted">{query ? `'${query}'에 맞는 글이 없어요.` : '아직 글이 없어요.'}</div>}
         {list.map((p) => (
-          <article key={p.id} className="post-card">
-            <span className="thumb" style={{ width: 136, height: 90 }} aria-hidden="true">
+          <article key={p.id} className={styles.card}>
+            <span className={styles.thumb} style={{ width: 136, height: 90 }} aria-hidden="true">
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d={ICON[p.cat]} /></svg>
             </span>
             <div className="stack" style={{ gap: 4, minWidth: 0 }}>
               <h3>{p.title}</h3>
               {p.body && <span className="small muted">{p.body}</span>}
-              <div className="post-meta">
+              <div className={styles.meta}>
                 {p.gu && <span>{p.gu}</span>}<span>{p.time}</span><span>댓글 {p.comments}</span>{p.mine && <span style={{ color: 'var(--brand)' }}>내 글</span>}
               </div>
             </div>

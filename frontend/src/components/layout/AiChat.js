@@ -8,6 +8,7 @@ import { sendChat } from '@/api/chat';
 import { ROUTES } from '@/constants/routes';
 import { useApp, useNumbers } from '@/stores/comparison';
 import { localReply, SUGGESTIONS } from '@/utils/chatbot';
+import styles from './AiChat.module.css';
 
 // **굵게**와 줄바꿈만 처리하는 간단한 표시
 function Rich({ text }) {
@@ -77,61 +78,61 @@ export default function AiChat() {
   return (
     <>
       {open && (
-        <section className="ai-chat" role="dialog" aria-label="무브산 AI 채팅">
-          <header className="ai-head">
-            <img src="/logo-mark.png" alt="" className="ai-avatar" />
+        <section className={styles.chat} role="dialog" aria-label="무브산 AI 채팅">
+          <header className={styles.head}>
+            <img src="/logo-mark.png" alt="" className={styles.avatar} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <strong>무브산 AI</strong>
-              <span className="ai-status">{API_BASE ? 'AI 연결됨' : '데모 응답 모드'}</span>
+              <span className={styles.status}>{API_BASE ? 'AI 연결됨' : '데모 응답 모드'}</span>
             </div>
             {msgs.length > 0 && (
-              <button className="ai-icon-btn" onClick={() => setMsgs([])} title="새 대화" aria-label="새 대화">
+              <button className={styles.iconBtn} onClick={() => setMsgs([])} title="새 대화" aria-label="새 대화">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7 M3 4v5h5" /></svg>
               </button>
             )}
           </header>
 
-          <div className="ai-body" ref={listRef}>
-            <div className="ai-msg bot">
-              <p className="ai-title">서울 → 부산 이주 AI 도우미, 무브산 💬</p>
+          <div className={styles.body} ref={listRef}>
+            <div className={`${styles.msg} ${styles.bot}`}>
+              <p className={styles.title}>서울 → 부산 이주 AI 도우미, 무브산 💬</p>
               <p>안녕하세요! 😀</p>
               <p>부산 이주에 대해 궁금한 점을 남겨주시면 바로 안내해 드릴게요.</p>
-              <p className="ai-title" style={{ marginTop: 12 }}>이런 걸 물어볼 수 있어요</p>
+              <p className={styles.title} style={{ marginTop: 12 }}>이런 걸 물어볼 수 있어요</p>
               <p>■ 구·군별 원룸 월세와 동네 정보</p>
               <p>■ 서울·부산 생활비 차이</p>
               <p>■ 내 조건으로 1년에 얼마 남는지</p>
               <p>■ 부산 청년 혜택</p>
-              <div className="ai-quick">
-                <Link href={ROUTES.home} className="ai-pill blue" onClick={() => setOpen(false)}>💰 생활비 계산하기</Link>
-                <Link href={ROUTES.map} className="ai-pill orange" onClick={() => setOpen(false)}>🏠 동네 월세 보기</Link>
+              <div className={styles.quick}>
+                <Link href={ROUTES.home} className={`${styles.pill} ${styles.blue}`} onClick={() => setOpen(false)}>💰 생활비 계산하기</Link>
+                <Link href={ROUTES.map} className={`${styles.pill} ${styles.orange}`} onClick={() => setOpen(false)}>🏠 동네 월세 보기</Link>
               </div>
             </div>
 
             {msgs.length === 0 && (
-              <div className="ai-suggest">
-                {SUGGESTIONS.map((s) => <button key={s} className="ai-suggest-btn" onClick={() => ask(s)}>{s}</button>)}
+              <div className={styles.suggest}>
+                {SUGGESTIONS.map((s) => <button key={s} className={styles.suggestBtn} onClick={() => ask(s)}>{s}</button>)}
               </div>
             )}
 
             {msgs.map((m, i) => (
-              <div key={i} className={`ai-msg ${m.role}`}>
+              <div key={i} className={`${styles.msg} ${m.role === 'user' ? styles.user : styles.bot}`}>
                 {m.role === 'user' ? m.text : <Rich text={m.text} />}
                 {m.links && (
-                  <div className="ai-quick">
-                    {m.links.map((l) => <Link key={l.href} href={l.href} className="ai-pill blue" onClick={() => pickGu(l.href)}>{l.label} →</Link>)}
+                  <div className={styles.quick}>
+                    {m.links.map((l) => <Link key={l.href} href={l.href} className={`${styles.pill} ${styles.blue}`} onClick={() => pickGu(l.href)}>{l.label} →</Link>)}
                   </div>
                 )}
                 {m.suggest && (
-                  <div className="ai-suggest" style={{ marginTop: 10 }}>
-                    {SUGGESTIONS.slice(0, 3).map((s) => <button key={s} className="ai-suggest-btn" onClick={() => ask(s)}>{s}</button>)}
+                  <div className={styles.suggest} style={{ marginTop: 10 }}>
+                    {SUGGESTIONS.slice(0, 3).map((s) => <button key={s} className={styles.suggestBtn} onClick={() => ask(s)}>{s}</button>)}
                   </div>
                 )}
               </div>
             ))}
-            {busy && <div className="ai-msg bot ai-typing" aria-label="답변 작성 중"><span /><span /><span /></div>}
+            {busy && <div className={`${styles.msg} ${styles.bot} ${styles.typing}`} aria-label="답변 작성 중"><span /><span /><span /></div>}
           </div>
 
-          <form className="ai-input" onSubmit={(e) => { e.preventDefault(); ask(text); }}>
+          <form className={styles.input} onSubmit={(e) => { e.preventDefault(); ask(text); }}>
             <textarea
               ref={inputRef}
               rows={2}
@@ -141,13 +142,13 @@ export default function AiChat() {
               onKeyDown={onKeyDown}
               aria-label="질문 입력"
             />
-            <button type="submit" className="ai-send" disabled={!text.trim() || busy} aria-label="보내기"><SendIcon /></button>
+            <button type="submit" className={styles.send} disabled={!text.trim() || busy} aria-label="보내기"><SendIcon /></button>
           </form>
-          <p className="ai-note">AI는 한정된 데이터에 기반하니, 중요한 정보는 추가 확인을 권장해요.</p>
+          <p className={styles.note}>AI는 한정된 데이터에 기반하니, 중요한 정보는 추가 확인을 권장해요.</p>
         </section>
       )}
 
-      <button className={open ? 'ai-fab open' : 'ai-fab'} aria-label={open ? 'AI 채팅 닫기' : 'AI 채팅 열기'} aria-expanded={open} onClick={() => setOpen(!open)}>
+      <button className={open ? `${styles.fab} ${styles.open}` : styles.fab} aria-label={open ? 'AI 채팅 닫기' : 'AI 채팅 열기'} aria-expanded={open} onClick={() => setOpen(!open)}>
         {open ? (
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B4A5E" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18" /></svg>
         ) : (

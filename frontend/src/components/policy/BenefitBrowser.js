@@ -3,12 +3,13 @@
 // 청년 혜택 목록: 카테고리 칩 + 조건으로 찾기(연령대·소득·거주 형태)
 import { useState } from 'react';
 import { BENEFITS, CATEGORIES, FILTERS, CAT_ICON } from '@/constants/benefits';
+import styles from './BenefitBrowser.module.css';
 
 const EMPTY = { ages: [], income: [], housing: [] };
 
 export function Thumb({ cat, size = 120 }) {
   return (
-    <span className="thumb" style={{ width: size, height: size }} aria-hidden="true">
+    <span className={styles.thumb} style={{ width: size, height: size }} aria-hidden="true">
       <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d={CAT_ICON[cat] || CAT_ICON['생활 지원']} /></svg>
     </span>
   );
@@ -38,14 +39,14 @@ export default function BenefitBrowser() {
         ))}
       </div>
 
-      <div className="ben-layout">
-        <aside className="card filter-card">
+      <div className={styles.layout}>
+        <aside className={`card ${styles.filter}`}>
           <h2 style={{ fontSize: 18 }}>조건으로 찾기</h2>
           {Object.entries(FILTERS).map(([g, f]) => (
             <fieldset key={g}>
               <legend>{f.label}</legend>
               {f.options.map((o) => (
-                <label key={o} className="check">
+                <label key={o} className={styles.check}>
                   <input type="checkbox" checked={draft[g].includes(o)} onChange={() => toggle(g, o)} />
                   {o}
                 </label>
@@ -64,7 +65,7 @@ export default function BenefitBrowser() {
           <span className="small muted">총 {list.length}개의 지원사업이 있어요.</span>
           {list.length === 0 && <div className="card muted">조건에 맞는 지원사업이 없어요. 조건을 줄여 보세요.</div>}
           {list.map((b) => (
-            <article key={b.id} className="ben-card">
+            <article key={b.id} className={styles.card}>
               <Thumb cat={b.cat} />
               <div className="stack" style={{ gap: 6, minWidth: 0 }}>
                 <span className="tag" style={{ alignSelf: 'flex-start' }}>{b.cat}</span>
@@ -72,7 +73,7 @@ export default function BenefitBrowser() {
                 <span className="small muted">{b.desc}</span>
                 <span className="small" style={{ fontWeight: 600 }}>{b.info}</span>
                 {open === b.id && (
-                  <div className="ben-detail small">
+                  <div className={`${styles.detail} small`}>
                     <div><b>대상</b> {b.ages.join(', ')} · {b.housing.join(', ')}</div>
                     <div><b>소득</b> {b.income.join(', ')}</div>
                     <div><b>주관</b> {b.org}</div>
